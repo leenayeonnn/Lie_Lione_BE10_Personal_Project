@@ -1,8 +1,8 @@
 package ChattingProgram.domain;
 
 public class Room {
-    private int roomNumber;
-    private Clients participants;
+    private final int roomNumber;
+    private final Clients participants;
 
     public Room(int roomNumber) {
         this.roomNumber = roomNumber;

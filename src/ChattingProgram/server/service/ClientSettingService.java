@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientSettingService {
-    public static String initializeClientNickName(Client me, Clients allClient) throws IOException {
+    public static void initializeClientNickName(Client me, Clients allClient) throws IOException {
         String nicknName;
         while ((nicknName = me.readLine()) != null) {
             if (nicknName.isBlank()) {
@@ -19,7 +19,6 @@ public class ClientSettingService {
         }
 
         me.setNickName(nicknName);
-        return nicknName;
     }
 
     public static void addToClientList(Client me, Clients allClient, Socket socket) {

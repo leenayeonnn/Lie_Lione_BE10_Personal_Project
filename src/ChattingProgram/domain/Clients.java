@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Clients {
-    private List<Client> clients;
+    private final List<Client> clients;
 
     public Clients() {
         clients = new ArrayList<>();

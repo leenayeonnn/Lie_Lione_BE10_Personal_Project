@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rooms {
-    private List<Room> rooms;
+    private final List<Room> rooms;
 
     public Rooms() {
         rooms = new ArrayList<>();

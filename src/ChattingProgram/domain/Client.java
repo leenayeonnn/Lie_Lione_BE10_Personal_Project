@@ -10,8 +10,8 @@ import java.net.Socket;
 public class Client implements Closeable {
     private String nickName;
     private int currentRoom;
-    private BufferedReader in;
-    private PrintWriter out;
+    private final BufferedReader in;
+    private final PrintWriter out;
 
     public Client(Socket socket) throws IOException {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
