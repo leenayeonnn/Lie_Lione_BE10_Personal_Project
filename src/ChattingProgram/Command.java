@@ -28,10 +28,6 @@ public enum Command {
         this.extraInput = extraInput;
     }
 
-    public String getExplain() {
-        return explain;
-    }
-
     public static String allExplain() {
         StringBuilder sb = new StringBuilder();
 
