@@ -1,33 +1,33 @@
 package ChattingProgram.server.service;
 
-import ChattingProgram.Command;
-import java.io.BufferedReader;
+import ChattingProgram.domain.Client;
+import ChattingProgram.domain.Clients;
+import ChattingProgram.domain.Command;
+import ChattingProgram.domain.Rooms;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 public class LobbyService {
-    public static void sendCommand(PrintWriter out) {
-        out.println(Command.allExplain());
+    public static void sendCommand(Client me) {
+        me.println(Command.allExplain());
     }
-    
-    public static boolean isStartWithCommand(String msg, PrintWriter out) {
+
+    public static boolean isStartWithCommand(String msg, Client me) {
         if (msg.charAt(0) == '/') {
             return true;
         }
-        out.println("현재 대화방에 들어가 있지 않습니다\n");
+        me.println("error : 현재 대화방에 들어가 있지 않습니다\n");
         return false;
     }
 
-    public static boolean isCorrectCommand(PrintWriter out, String cmd, StringTokenizer st) {
+    public static boolean isCorrectCommand(Client me, String cmd, StringTokenizer st) {
         if (!isUsableCommand(cmd)) {
-            out.println("error : 로비에서 사용 불가한 명령입니다.\n");
+            me.println("error : 로비에서 사용 불가한 명령입니다.\n");
             return false;
         }
 
         if (!isCorrectCommandUse(cmd, st)) {
-            out.println("error : 명령어가 잘못 사용되었습니다.\n");
+            me.println("error : 명령어가 잘못 사용되었습니다.\n");
             return false;
         }
 
@@ -42,9 +42,9 @@ public class LobbyService {
         return Command.isCorrectCommandUse(cmd, st);
     }
 
-    public static boolean activeByCommand(BufferedReader in, PrintWriter out, String cmd, StringTokenizer st,
-                                          String nickName, Map<String, PrintWriter> allClient,
-                                          Map<Integer, Map<String, PrintWriter>> allRoom) throws IOException {
+    public static boolean activeByCommand(Client me, String cmd, StringTokenizer st, Clients allClient, Rooms allRoom)
+            throws IOException {
+
         if ("/bye".equals(cmd)) {
             return false;
         }
@@ -52,35 +52,35 @@ public class LobbyService {
         int roomNumber;
         switch (cmd) {
             case "/list":
-                sendRoomList(out, allRoom);
+                sendRoomList(me, allRoom);
                 break;
             case "/create":
-                roomNumber = ChatRoomService.makeNewRoom(out, allRoom);
-                ChatRoomService.enterRoom(in, out, nickName, allRoom, roomNumber, allClient);
+                roomNumber = ChatRoomService.makeNewRoom(me, allRoom);
+                ChatRoomService.enterRoom(me, allRoom, roomNumber, allClient);
                 break;
             case "/join":
                 try {
                     roomNumber = Integer.parseInt(st.nextToken());
-                    ChatRoomService.joinRoom(in, out, nickName, allRoom, roomNumber, allClient);
+                    ChatRoomService.joinRoom(me, allRoom, roomNumber, allClient);
                 } catch (NumberFormatException e) {
-                    out.println("error : 명령어가 잘못 사용되었습니다.");
+                    me.println("error : 명령어가 잘못 사용되었습니다.");
                 }
                 break;
             case "/users":
-                out.println("현재 접속 중인 유저 : " + allClient.keySet());
+                me.println("- 현재 접속 중인 유저 -\n" + allClient + "--------------");
                 break;
             case "/toAll":
-                allClient.values().forEach(pw -> pw.printf("[전체 메세지] %s : %s\n", nickName, st.nextToken()));
+                allClient.println("[전체 메세지] " + me.getNickName() + " : " + st.nextToken());
         }
         return true;
     }
 
-    private static void sendRoomList(PrintWriter out, Map<Integer, Map<String, PrintWriter>> allRoom) {
+    private static void sendRoomList(Client me, Rooms allRoom) {
         if (allRoom.isEmpty()) {
-            out.println("존재하는 방이 없습니다.\n");
+            me.println("존재하는 방이 없습니다.\n");
             return;
         }
-        out.println("현재 대화방 목록 : " + allRoom.keySet());
+        me.println("현재 대화방 목록 : " + allRoom.list());
 
     }
 }

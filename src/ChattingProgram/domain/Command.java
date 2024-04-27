@@ -1,4 +1,4 @@
-package ChattingProgram;
+package ChattingProgram.domain;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;

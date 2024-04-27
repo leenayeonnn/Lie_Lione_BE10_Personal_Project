@@ -1,33 +1,30 @@
 package ChattingProgram.server.service;
 
-import java.io.BufferedReader;
+import ChattingProgram.domain.Client;
+import ChattingProgram.domain.Clients;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Map;
 
 public class ClientSettingService {
-    public static String initializeClientNickName(BufferedReader in, PrintWriter out,
-                                                  Map<String, PrintWriter> allClient) throws IOException {
-        String nickname;
-        while ((nickname = in.readLine()) != null) {
-            if (nickname.isBlank()) {
-                out.println("nameBlank");
-            } else if (allClient.containsKey(nickname)) {
-                out.println("nameDuplicate");
+    public static String initializeClientNickName(Client me, Clients allClient) throws IOException {
+        String nicknName;
+        while ((nicknName = me.readLine()) != null) {
+            if (nicknName.isBlank()) {
+                me.println("nameBlank");
+            } else if (allClient.contains(nicknName)) {
+                me.println("nameDuplicate");
             } else {
                 break;
             }
         }
-        return nickname;
+
+        me.setNickName(nicknName);
+        return nicknName;
     }
 
-    public static void addToClientList(Map<String, PrintWriter> allClient, String nickName, PrintWriter out,
-                                       Socket socket) {
-        synchronized (allClient) {
-            allClient.put(nickName, out);
-        }
-        out.println("[" + nickName + "]님 어서오세요\n");
-        System.out.printf("%s 닉네임의 사용자가 연결했습니다 : %s\n", nickName, socket.getInetAddress().getHostAddress());
+    public static void addToClientList(Client me, Clients allClient, Socket socket) {
+        allClient.add(me);
+        me.println("[" + me.getNickName() + "]님 어서오세요\n");
+        System.out.printf("%s 닉네임의 사용자가 연결했습니다 : %s\n", me.getNickName(), socket.getInetAddress().getHostAddress());
     }
 }
