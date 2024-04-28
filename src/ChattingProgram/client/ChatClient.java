@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class ChatClient {
     private final static String HOST_NAME = "localhost"; // 서버가 실행 중인 호스트의 이름 또는 IP 주소
@@ -24,7 +25,7 @@ public class ChatClient {
             makeNickname(stdIn, in, out);
 
             // 서버로부터 메시지를 읽어 화면에 출력하는 별도의 스레드
-            Thread readThread = new Thread(new ServerMessageReader(in));
+            Thread readThread = new Thread(new ServerMessageReader(in, out));
             readThread.start(); // 메시지 읽기 스레드 시작
 
             // 사용자 입력 처리
@@ -36,6 +37,11 @@ public class ChatClient {
                 if ("/bye".equals(userInput)) {
                     out.println(userInput);
                     break;
+                }
+
+                if ("/withdraw".equals(userInput) || "/withdraw".equals(new StringTokenizer(userInput).nextToken())) {
+                    out.println("/");
+                    continue;
                 }
 
                 // 서버에 메시지를 전송합니다.

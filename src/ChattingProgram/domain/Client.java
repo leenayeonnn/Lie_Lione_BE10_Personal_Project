@@ -10,6 +10,7 @@ import java.net.Socket;
 public class Client implements Closeable {
     private String nickName;
     private int currentRoom;
+    private int report;
     private final BufferedReader in;
     private final PrintWriter out;
 
@@ -40,6 +41,7 @@ public class Client implements Closeable {
 
     public void exitRoom() {
         this.currentRoom = 0;
+        this.report = 0;
     }
 
     @Override
@@ -55,5 +57,13 @@ public class Client implements Closeable {
 
     public int getCurrentRoom() {
         return currentRoom;
+    }
+
+    public int getReport() {
+        return report;
+    }
+
+    public int receiveReport() {
+        return ++report;
     }
 }

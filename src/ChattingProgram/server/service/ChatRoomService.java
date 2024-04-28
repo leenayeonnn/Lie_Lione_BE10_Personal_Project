@@ -27,8 +27,8 @@ public class ChatRoomService {
         Room currentRoom = allRoom.find(roomNumber);
 
         entrance(currentRoom, roomNumber, me);
-        chatting(currentRoom, me, allClient);
-        exitRoom(currentRoom, roomNumber, allRoom, me);
+        boolean isExit = chatting(currentRoom, me, allClient);
+        exitRoom(currentRoom, roomNumber, allRoom, me, isExit);
     }
 
     private synchronized static void entrance(Room currentRoom, int roomNumber, Client me) {
@@ -38,7 +38,7 @@ public class ChatRoomService {
         currentRoom.broadcast(me.getNickName() + " 님이 방에 입장했습니다.");
     }
 
-    private static void chatting(Room currentRoom, Client me, Clients allClient) throws IOException {
+    private static boolean chatting(Room currentRoom, Client me, Clients allClient) throws IOException {
 
         while (true) {
             String msg;
@@ -58,8 +58,9 @@ public class ChatRoomService {
                 continue;
             }
 
-            if (!activeByCommand(cmd, st, me, currentRoom, allClient)) {
-                break;
+            int exitCase;
+            if ((exitCase = activeByCommand(cmd, st, me, currentRoom, allClient)) != 0) {
+                return exitCase == 1;
             }
         }
     }
@@ -90,10 +91,14 @@ public class ChatRoomService {
         return Command.isCorrectCommandUse(cmd, st);
     }
 
-    private static boolean activeByCommand(String cmd, StringTokenizer st, Client me, Room currentRoom,
-                                           Clients allClient) {
+    private static int activeByCommand(String cmd, StringTokenizer st, Client me, Room currentRoom,
+                                       Clients allClient) {
         if ("/exit".equals(cmd)) {
-            return false;
+            return 1;
+        }
+
+        if ("/withdraw".equals(cmd)) {
+            return -1;
         }
 
         switch (cmd) {
@@ -108,8 +113,10 @@ public class ChatRoomService {
                 break;
             case "/toAll":
                 allClient.println("[전체 메세지] " + me.getNickName() + " : " + st.nextToken());
+            case "/report":
+                report(st, me, currentRoom);
         }
-        return true;
+        return 0;
     }
 
     private static void whisper(StringTokenizer st, Client me, Room currentRoom) {
@@ -131,7 +138,33 @@ public class ChatRoomService {
         whisperClient.println("[귓속말] " + me.getNickName() + " : " + msg);
     }
 
-    private synchronized static void exitRoom(Room currentRoom, int roomNumber, Rooms allRoom, Client me) {
+    private static void report(StringTokenizer st, Client me, Room currentRoom) {
+        String reportNicknaem = st.nextToken();
+
+        if (reportNicknaem.equals(me.getNickName())) {
+            me.println("error : 본인에게 신고는 불가합니다.");
+            return;
+        }
+
+        Client reportClient;
+        if ((reportClient = currentRoom.findClient(reportNicknaem)) == null) {
+            me.println("error : 현재 대화방에 존재하지 않는 닉네임 입니다.");
+            return;
+        }
+
+        reportClient.receiveReport();
+        if (reportClient.getReport() == 3) {
+            reportClient.println("신고를 받았습니다 (3/3)");
+            reportClient.println("withdraw");
+            return;
+        }
+
+        reportClient.println("신고를 받았습니다 (" + reportClient.getReport() + "/3)");
+
+    }
+
+    private synchronized static void exitRoom(Room currentRoom, int roomNumber, Rooms allRoom, Client me,
+                                              boolean isExit) {
         currentRoom.remove(me);
         me.exitRoom();
         if (currentRoom.isEmpty()) {
@@ -140,7 +173,13 @@ public class ChatRoomService {
             return;
         }
 
-        currentRoom.broadcast(me.getNickName() + "님이 방을 나갔습니다.");
+        if (isExit) {
+            currentRoom.broadcast(me.getNickName() + "님이 방을 나갔습니다.");
+            me.println("방을 나왔습니다.\n");
+        } else {
+            currentRoom.broadcast(me.getNickName() + "님이 강제 퇴장 되었습니다.");
+            me.println("강제 퇴장 되었습니다.\n");
+        }
     }
 
     public static void joinRoom(Client me, Rooms allRoom, int roomNumber, Clients allClient) throws IOException {
