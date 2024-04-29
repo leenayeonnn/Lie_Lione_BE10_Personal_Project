@@ -22,8 +22,8 @@ public class Rooms {
                 .orElse(null);
     }
 
-    public void add(int roomNumber) {
-        rooms.add(new Room(roomNumber));
+    public void add(int roomNumber, String password) {
+        rooms.add(new Room(roomNumber, password));
     }
 
     public synchronized void remove(Room room) {

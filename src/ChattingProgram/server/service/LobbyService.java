@@ -50,18 +50,22 @@ public class LobbyService {
         }
 
         int roomNumber;
+        String password = null;
         switch (cmd) {
             case "/list":
                 sendRoomList(me, allRoom);
                 break;
             case "/create":
-                roomNumber = ChatRoomService.makeNewRoom(me, allRoom);
+                roomNumber = ChatRoomService.makeNewRoom(st, me, allRoom);
                 ChatRoomService.enterRoom(me, allRoom, roomNumber, allClient);
                 break;
             case "/join":
                 try {
                     roomNumber = Integer.parseInt(st.nextToken());
-                    ChatRoomService.joinRoom(me, allRoom, roomNumber, allClient);
+                    if (st.hasMoreTokens()) {
+                        password = st.nextToken();
+                    }
+                    ChatRoomService.joinRoom(me, allRoom, roomNumber, password, allClient);
                 } catch (NumberFormatException e) {
                     me.println("error : 명령어가 잘못 사용되었습니다.");
                 }

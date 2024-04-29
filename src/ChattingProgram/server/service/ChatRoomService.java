@@ -11,11 +11,17 @@ import java.util.StringTokenizer;
 public class ChatRoomService {
     private static int newRoomNumber;
 
-    public synchronized static int makeNewRoom(Client me, Rooms allRoom) {
+    public synchronized static int makeNewRoom(StringTokenizer st, Client me, Rooms allRoom) {
         if (allRoom.isEmpty()) {
             newRoomNumber = 0;
         }
-        allRoom.add(++newRoomNumber);
+
+        String password = null;
+        if (st.hasMoreTokens()) {
+            password = st.nextToken();
+        }
+
+        allRoom.add(++newRoomNumber, password);
 
         me.println("방 번호 [" + newRoomNumber + "] 가 생성되었습니다.\n");
         System.out.println("방 번호 [" + newRoomNumber + "] 가 생성되었습니다.");
@@ -170,6 +176,7 @@ public class ChatRoomService {
         if (currentRoom.isEmpty()) {
             allRoom.remove(currentRoom);
             System.out.println("방번호 [" + roomNumber + "]가 삭제되었습니다.");
+            me.println("방을 나왔습니다.\n");
             return;
         }
 
@@ -182,12 +189,33 @@ public class ChatRoomService {
         }
     }
 
-    public static void joinRoom(Client me, Rooms allRoom, int roomNumber, Clients allClient) throws IOException {
+    public static void joinRoom(Client me, Rooms allRoom, int roomNumber, String password, Clients allClient)
+            throws IOException {
         if (!allRoom.contains(roomNumber)) {
-            me.println("error : 해당 방이 존재하지 않습니다.");
+            me.println("error : 해당 방이 존재하지 않습니다.\n");
             return;
         }
 
+        Room wantRoom = allRoom.find(roomNumber);
+        if (wantRoom.isPrivate()) {
+            if (!checkPassword(me, wantRoom, password)) {
+                return;
+            }
+        } else {
+            if (password != null) {
+                me.println("error : 해당 방은 비밀방이 아닙니다.\n");
+                return;
+            }
+        }
+
         enterRoom(me, allRoom, roomNumber, allClient);
+    }
+
+    private static boolean checkPassword(Client me, Room wantRoom, String password) {
+        if (wantRoom.checkPassword(password)) {
+            return true;
+        }
+        me.println("error : 비밀번호가 틀렸습니다.\n");
+        return false;
     }
 }

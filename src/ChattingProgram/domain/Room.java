@@ -2,10 +2,12 @@ package ChattingProgram.domain;
 
 public class Room {
     private final int roomNumber;
+    private String password;
     private final Clients participants;
 
-    public Room(int roomNumber) {
+    public Room(int roomNumber, String password) {
         this.roomNumber = roomNumber;
+        this.password = password;
         participants = new Clients();
     }
 
@@ -31,6 +33,14 @@ public class Room {
 
     public boolean isEmpty() {
         return participants.isEmpty();
+    }
+
+    public boolean isPrivate() {
+        return password != null;
+    }
+
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
     }
 
     public void broadcast(String msg) {
