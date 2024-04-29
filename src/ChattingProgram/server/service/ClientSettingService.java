@@ -7,18 +7,19 @@ import java.net.Socket;
 
 public class ClientSettingService {
     public static void initializeClientNickName(Client me, Clients allClient) throws IOException {
-        String nicknName;
-        while ((nicknName = me.readLine()) != null) {
-            if (nicknName.isBlank()) {
+        String nickName;
+        while ((nickName = me.readLine()) != null) {
+            if (nickName.isBlank()) {
                 me.println("nameBlank");
-            } else if (allClient.contains(nicknName)) {
+            } else if (allClient.contains(nickName)) {
                 me.println("nameDuplicate");
             } else {
+                me.println("nameSuccess");
                 break;
             }
         }
 
-        me.setNickName(nicknName);
+        me.setNickName(nickName);
     }
 
     public static void addToClientList(Client me, Clients allClient, Socket socket) {

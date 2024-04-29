@@ -62,17 +62,17 @@ public class ChatClient {
             nickname = stdIn.nextLine();
             out.println(nickname); // 서버에 닉네임을 전송
 
-            if ("nameError".equals((msg = in.readLine()))) {
-                System.out.printf("error : [%s] is a duplicate nickname\n", nickname);
-                continue;
-            }
-            if ("nameDuplicate".equals(msg)) {
+            if ("nameBlank".equals((msg = in.readLine()))) {
                 System.out.println("error : nickname only have spaces or empty is not allowed\n");
                 continue;
             }
+            if ("nameDuplicate".equals(msg)) {
+                System.out.printf("error : [%s] is a duplicate nickname\n", nickname);
+                continue;
+            }
+
             break;
         }
-        System.out.println(msg);
     }
 }
 
