@@ -15,19 +15,15 @@ public class Clients {
                 .anyMatch(client -> client.getNickName().equals(nickName));
     }
 
-    public synchronized void add(Client client) {
-        clients.add(client);
-    }
-
-    public void println(String msg) {
-        clients.forEach(client -> client.println(msg));
-    }
-
     public Client find(String nickName) {
         return clients.stream()
                 .filter(client -> client.getNickName().equals(nickName))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public synchronized void add(Client client) {
+        clients.add(client);
     }
 
     public synchronized void remove(Client me) {
@@ -36,6 +32,10 @@ public class Clients {
 
     public boolean isEmpty() {
         return clients.isEmpty();
+    }
+
+    public void println(String msg) {
+        clients.forEach(client -> client.println(msg));
     }
 
     @Override

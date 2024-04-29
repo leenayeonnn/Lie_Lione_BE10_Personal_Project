@@ -9,10 +9,10 @@ public enum Command {
     JOIN("/join", "방 입장 : /join [방번호(숫자)]", "lobby", 1),
     BYE("/bye", "접속 종료 : /bye", "lobby", 0),
 
-    EXIT("/exit", "방 나가기 : /exit", "room", 0),
-    WHISPER("/whisper", "귓속말 : /whisper [유저] [메세지]", "room", 2),
     ROOM_USERS("/roomUsers", "현재 방에 있는 모든 유저 : /roomUsers", "room", 0),
+    WHISPER("/whisper", "귓속말 : /whisper [유저] [메세지]", "room", 2),
     REPORT("/report", "유저 신고하기 : /report [유저]", "room", 1),
+    EXIT("/exit", "방 나가기 : /exit", "room", 0),
 
     USERS("/users", "현재 접속 중인 모든 유저 : /users", "all", 0),
     TO_ALL("/toAll", "전체 메세지 보내기 : /toAll [메세지]", "all", 1),

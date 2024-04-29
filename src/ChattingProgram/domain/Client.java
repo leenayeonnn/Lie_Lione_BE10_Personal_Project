@@ -27,6 +27,14 @@ public class Client implements Closeable {
         this.nickName = nicknName;
     }
 
+    public int getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public int getReport() {
+        return report;
+    }
+
     public String readLine() throws IOException {
         return in.readLine();
     }
@@ -44,6 +52,10 @@ public class Client implements Closeable {
         this.report = 0;
     }
 
+    public void receiveReport() {
+        report++;
+    }
+
     @Override
     public String toString() {
         return nickName;
@@ -53,17 +65,5 @@ public class Client implements Closeable {
     public void close() throws IOException {
         in.close();
         out.close();
-    }
-
-    public int getCurrentRoom() {
-        return currentRoom;
-    }
-
-    public int getReport() {
-        return report;
-    }
-
-    public int receiveReport() {
-        return ++report;
     }
 }

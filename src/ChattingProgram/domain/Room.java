@@ -13,14 +13,6 @@ public class Room {
         return roomNumber;
     }
 
-    public void add(Client client) {
-        participants.add(client);
-    }
-
-    public void broadcast(String msg) {
-        participants.println(msg);
-    }
-
     public String getParticipants() {
         return participants.toString();
     }
@@ -29,12 +21,20 @@ public class Room {
         return participants.find(nickName);
     }
 
+    public void add(Client client) {
+        participants.add(client);
+    }
+
     public void remove(Client me) {
         participants.remove(me);
     }
 
     public boolean isEmpty() {
         return participants.isEmpty();
+    }
+
+    public void broadcast(String msg) {
+        participants.println(msg);
     }
 
     @Override
